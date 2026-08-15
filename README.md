@@ -94,7 +94,7 @@ Before performing the analysis, SQL validation checks were used to assess:
 
 ## Monitoring Dashboard
 
-> **[🔗 View Live Interactive Dashboard on Tableau Public](YOUR_TABLEAU_PUBLIC_URL_HERE)**
+> 
 
 ![Dashboard Preview](assets/dashboard_preview.png)
 
