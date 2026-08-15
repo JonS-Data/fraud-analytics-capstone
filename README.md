@@ -74,7 +74,7 @@ Before performing the analysis, SQL validation checks were used to assess:
 | **Total Fraud Loss Amount** | $11,005.65 |
 | **Economic Fraud Loss Rate** | 2.95% |
 | **Average Transaction Amount** | $174.61 |
-| **Average Fraudulent Ticket Size** | $166.75 |
+| **Average Sales Amount** | $166.75 |
 
 ---
 
