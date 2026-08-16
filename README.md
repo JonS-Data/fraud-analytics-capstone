@@ -87,7 +87,6 @@ Before running the main queries, I ran validation checks in SQL to inspect the d
 
 ## Tableau Dashboard
 
-> **[🔗 View the Interactive Dashboard on Tableau Public](YOUR_TABLEAU_PUBLIC_URL_HERE)**
 
 ![Dashboard Preview](assets/dashboard_preview.png)
 
