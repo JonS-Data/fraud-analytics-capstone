@@ -93,11 +93,6 @@ Before running the main queries, I ran validation checks in SQL to inspect the d
 
 ---
 
-## SQL Queries
-
-<details>
-<summary><b>1. Data Quality & Overall Metrics</b> (Click to expand)</summary>
-
 ## Helpful Fraud Prevention Suggestions
 1. Step Up OTP/2FA Verification: Prompt SMS verification or 2FA on orders over $150 originating from high-risk locations like Las Vegas and APAC hubs
 2. Rate Limiting: Add rate limits between 12:00 AM and 5:00 AM to catch automated scripting
