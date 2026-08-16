@@ -1,100 +1,93 @@
-# Retail & E-Commerce Fraud Risk Analytics & Monitoring
+# E-Commerce & Retail Fraud Analysis
 
 ---
 
-## Overview
+## What This Project Is About
 
-This project analyzes a portfolio of **2,133 global e-commerce and retail transactions** to identify fraud patterns, measure economic loss exposure, and evaluate automated monitoring strategies.
+I built this project to analyze **2,133 global retail transactions** to see where fraudulent charges are actually coming from, how much money was lost, and what kind of rules could stop them. 
 
-The objective is to approach the dataset from a **Fraud Risk & Operations Monitoring perspective**:
+Instead of jumping straight into a complex ML model, I wanted to focus on core **Fraud Operations & Risk Monitoring**:
+* Finding out which cities and customer tiers have the highest fraud rates
+* Checking how much dollar volume was lost to fraud
+* Seeing if transaction time (velocity) shows bot or card testing behavior
+* Cleaning and validating the raw data in BigQuery with SQL
+* Building a clean, interactive Tableau dashboard to track everything visually
 
-* Monitor portfolio-level fraud KPIs and dollar loss exposure
-* Identify geographic hubs and loyalty tiers with elevated fraud risk
-* Analyze the economic concentration of fraud losses across product lines and devices
-* Evaluate temporal velocity patterns to detect automated script testing
-* Translate BigQuery SQL queries into an interactive Tableau monitoring dashboard
-
-The project uses **SQL (Google BigQuery)** for data validation, aggregation, and segmentation, with **Tableau Public** used for executive reporting and visual monitoring.
-
----
-
-## Business Questions
-
-The analysis focuses on several practical risk-monitoring questions:
-
-1. What is the overall fraud profile and total economic loss of the transaction portfolio?
-2. Is fraud disproportionately concentrated in particular geographic regions or loyalty tiers?
-3. Are there temporal velocity patterns associated with elevated fraud activity?
-4. What data ingestion and demographic tracking gaps exist across checkout gateways?
-5. What monitoring rules and step-up authentication thresholds should be implemented to mitigate losses?
+**Tools Used:** Google BigQuery (SQL), Tableau Public
 
 ---
 
-## Dataset
+## Questions I Wanted to Answer
 
-The analysis utilizes transactional data covering multi-channel customer purchases across 20 global metropolitan markets.
-
-The dataset contains:
-* **2,133 transactions**
-* `Transaction_ID` — Unique transaction identifier
-* `Customer_ID` — Unique customer profile identifier
-* `Transaction_Time` — Timestamp of checkout execution
-* `Purchase_Amount` — Gross transaction value ($ USD)
-* `Product_Category` — Retail merchandise classification
-* `Location` — Purchasing metropolitan gateway
-* `Device_Type` — Device used for checkout (`Desktop`, `Laptop`, `Mobile`, `Tablet`)
-* `Customer_Loyalty_Tier` — Account loyalty classification (`Bronze`, `Silver`, `Gold`, `Platinum`, `VIP`)
-* `Fraud_Flag` — Target fraud indicator (`0 = Genuine`, `1 = Fraud`)
-
-The raw dataset is stored in Google BigQuery and processed through structured SQL scripts.
+1. What is the overall fraud rate and total money lost across the dataset?
+2. Are certain cities or loyalty tiers getting hit harder than others?
+3. What times of the day see the most fraud activity?
+4. Are there any data quality issues or missing values in the raw dataset?
+5. What simple rules or step-up verification steps could help prevent these losses?
 
 ---
 
-## Data Quality
+## Dataset Breakdown
 
-Before performing the analysis, SQL validation checks were used to assess:
-
-* Portfolio size and unique entity counts
-* Schema formatting and temporal data types
-* Target binary encoding verification (`Fraud_Flag IN (0, 1)`)
-* Missing values in customer demographic fields
-
-**Audit Result:** Identified **106 records with missing demographic values** (`Customer_Age IS NULL`), primarily concentrated in processing gateways for Tokyo (10.53% missing) and Monaco (9.09% missing).
+The dataset covers retail transactions across 20 global cities:
+* **2,133 total rows**
+* `Transaction_ID` — Unique ID for the order
+* `Customer_ID` — Unique ID for the customer
+* `Transaction_Time` — Time the transaction went through
+* `Purchase_Amount` — Order value in USD ($)
+* `Product_Category` — Type of item bought
+* `Location` — City where the transaction happened
+* `Device_Type` — Device used (`Desktop`, `Laptop`, `Mobile`, `Tablet`)
+* `Customer_Loyalty_Tier` — Customer tier (`Bronze`, `Silver`, `Gold`, `Platinum`, `VIP`)
+* `Fraud_Flag` — Target variable (`0 = Normal`, `1 = Fraud`)
 
 ---
 
-## Executive Portfolio KPIs
+## Data Quality & Cleaning Checks
 
-| KPI | Result |
+Before running the main queries, I ran validation checks in SQL to inspect the data:
+* Verified transaction counts and distinct customer IDs
+* Checked data types and confirmed `Fraud_Flag` only contained `0` and `1`
+* Checked for `NULL` values across demographic fields
+
+**Audit Note:** Found **106 rows missing customer age** (`Customer_Age IS NULL`). Most of these missing values came from transactions in Tokyo (10.53% missing) and Monaco (9.09% missing).
+
+---
+
+## Portfolio Summary
+
+| Metric | Value |
 | :--- | :--- |
 | **Total Transactions** | 2,133 |
 | **Fraud Transactions** | 66 |
-| **Fraud Rate (Count)** | 3.09% |
+| **Fraud Rate (%)** | 3.09% |
 | **Total Transaction Volume** | $372,451.82 |
-| **Total Fraud Loss Amount** | $11,005.65 |
+| **Total Fraud Dollar Loss** | $11,005.65 |
 | **Economic Fraud Loss Rate** | 2.95% |
-| **Average Transaction Amount** | $174.61 |
-| **Average Sales Amount** | $166.75 |
+| **Average Sales Amount (All Transactions)** | $174.61 |
+| **Average Sales Amount (Fraud Only)** | $166.75 |
 
 ---
 
-## Key Risk Findings
+## Key Takeaways
 
-### 1. Geographic Risk Concentration
-* **Las Vegas** represents the highest-risk market with a **7.84% fraud rate** (more than 2.5x the portfolio average), followed by APAC regional nodes including **Shanghai (5.13%)**, **Sydney (4.69%)**, and **Singapore (4.46%)**.
-* Low-risk baseline regions include **Paris (0.00%)**, **Geneva (0.00%)**, and **Rome (0.93%)**.
+### 1. High-Risk Cities
+* **Las Vegas** had the highest fraud rate by far at **7.84%** (more than double the baseline average of 3.09%).
+* APAC cities also showed higher risk profiles, including **Shanghai (5.13%)**, **Sydney (4.69%)**, and **Singapore (4.46%)**.
+* The lowest-risk cities were **Paris (0.00%)**, **Geneva (0.00%)**, and **Rome (0.93%)**.
 
-### 2. Loyalty Tier & Account Takeover (ATO) Vulnerability
-* While **Bronze accounts** generate the highest raw fraud volume (24 cases), **VIP tiers exhibit an elevated fraud rate of 5.41%**, indicating targeted credential stuffing and high-value account takeover behavior.
+### 2. VIP Accounts & Account Takeover (ATO)
+* Bronze accounts had the most fraud cases in total (24 cases), which makes sense since it's the largest user group.
+* However, **VIP accounts had the highest percentage fraud rate at 5.41%**, pointing to possible targeted account takeover (ATO) attacks.
 
-### 3. Temporal Velocity Surges
-* Off-peak overnight hours demonstrate sharp fraud surges, peaking at **4:00 AM (7.95% fraud rate)** and **Midnight (5.88%)**, contrasting with daytime baselines (~1.16%–3.85%).
+### 3. Early Morning Spikes
+* Fraud jumped noticeably during early morning hours, hitting **7.95% at 4:00 AM** and **5.88% at Midnight**, compared to normal daytime rates (~1.16%–3.85%).
 
 ---
 
-## Monitoring Dashboard
+## Tableau Dashboard
 
-> 
+> **[🔗 View the Interactive Dashboard on Tableau Public](YOUR_TABLEAU_PUBLIC_URL_HERE)**
 
 ![Dashboard Preview](assets/dashboard_preview.png)
 
@@ -103,15 +96,9 @@ Before performing the analysis, SQL validation checks were used to assess:
 ## SQL Queries
 
 <details>
-<summary><b>1. Data Quality & Baseline KPI Audit</b> (Click to expand)</summary>
+<summary><b>1. Data Quality & Overall Metrics</b> (Click to expand)</summary>
 
-```sql
-SELECT 
-  COUNT(*) AS total_transactions,
-  COUNT(DISTINCT Customer_ID) AS unique_customers,
-  SUM(Fraud_Flag) AS total_fraud_cases,
-  COUNTIF(Customer_Age IS NULL) AS missing_age_count,
-  ROUND(SUM(Fraud_Flag) * 100.0 / COUNT(*), 2) AS overall_fraud_rate_pct,
-  ROUND(SUM(Purchase_Amount), 2) AS total_portfolio_volume,
-  ROUND(SUM(CASE WHEN Fraud_Flag = 1 THEN Purchase_Amount ELSE 0 END), 2) AS total_fraud_loss
-FROM `fraud_analysis.fraud_records`;
+## Helpful Fraud Prevention Suggestions
+1. Step Up OTP/2FA Verification: Prompt SMS verification or 2FA on orders over $150 originating from high-risk locations like Las Vegas and APAC hubs
+2. Rate Limiting: Add rate limits between 12:00 AM and 5:00 AM to catch automated scripting
+3. Helping High Profile: Require re-authentication whenever a VIP user changes their shipping address or places rapid orders.
